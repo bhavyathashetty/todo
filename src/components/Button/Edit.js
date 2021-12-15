@@ -2,10 +2,10 @@ import React from "react";
 
 
 
-const Edit =({editTodo,todo})=>{
+const Edit =({editTodo,id,todo})=>{
     return(
         <div>
-            <button  className="edit" onClick={() => editTodo(todo)}>Edit</button>
+            <button  className="edit" onClick={() => editTodo(id,todo)}>Edit</button>
            
         </div>
     )
