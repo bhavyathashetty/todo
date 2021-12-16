@@ -6,11 +6,12 @@ input{
 }
 .list{
 
- display: flex;
+    display: flex;
     justify-content:space-between;
     margin: 20px;
 
 }
+
 
 button.edit{
  

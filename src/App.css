@@ -14,5 +14,9 @@ h1{
   display: flex;
   justify-content:center;
 }
+.crossed-line {
+  text-decoration: line-through;
+  color: red;
+}
 
 

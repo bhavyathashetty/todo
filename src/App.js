@@ -1,22 +1,22 @@
 import React from 'react';
 import './App.css';
 import Input from './components/Input/Input';
-import Add from './components/Button/Add';
-import Edit from './components/Button/Edit';
-import Delete from './components/Button/Delete';
-import { useState, useEffect,useRef } from 'react';
-import {v4 as uuid} from 'uuid';
+import { useState, useEffect } from 'react';
+import { v4 as uuid } from 'uuid';
+import Button from './components/Button/Button';
 
 
 
 
 function App() {
-  const box = useRef()
   const uid = uuid();
+  const [editToggle, setEditToggle] = useState(false)
   const [userInput, setUserInput] = useState('');
   const savedTodo = JSON.parse(localStorage.getItem('todos') || '[]');
-  // const [todoList, setTodoList] = useState([{id:0,todo:'Eat'},{id:1,todo:'Sleep'},...savedTodo])
+  // const initialTodo =[{id:1,todo:"Eat"},...savedTodo];
+  // const [todoList, setTodoList] = useState(initialTodo)
   const [todoList, setTodoList] = useState(savedTodo);
+  
 
 
   useEffect(() => {
@@ -29,54 +29,60 @@ function App() {
   }
 
 
-  const addNewTask = () => {
+  const handleAddNewTask = () => {
     if (userInput !== '') {
+      // let copyTodoList =[...todoList]
+      // copyTodoList=[...copyTodoList,{id:uid,todo:userInput}]
+      // setTodoList(copyTodoList,...savedTodo)
       setTodoList(todoList.concat({ id: uid, todo: userInput }))
       setUserInput('')
     }
-    box.current.innerHTML='+'
+    setEditToggle(false)
   }
 
-  const deleteTodo = (id) => {
+  const handleDeleteTodo = (id) => {
     const newList = todoList.filter((item) => item.id !== id);
     setTodoList(newList);
 
   }
 
-  const editTodo = (id, todo) => {
+  const handleEditTodo = (id, todo) => {
     setUserInput(todo)
     const newList = todoList.filter((item) => item.id !== id);
     setTodoList(newList);
-    box.current.innerHTML='Edit'
+    setEditToggle(true)
   }
 
-  const crossLine = (e) => {
+
+  const crossline = (e) => {
     const element = e.target;
     element.classList.toggle("crossed-line");
- 
+
   };
 
-  const onkeyup = (e) => {
-    if (e.key === "Enter") {
-      addNewTask()
-    }
-  }
 
   return (
     <div className="App">
       <h1>ToDo-List</h1>
-      <div className='input'>
-        <Input userInput={userInput} handleInputChange={handleInputChange} onkeyup={onkeyup} />
-        <Add addNewTask={addNewTask} box={box} />
-      </div>
-      {todoList.map(({ id, todo}) => {
+      <form onSubmit={handleAddNewTask}>
+        <div className='input'>
+          <Input userInput={userInput} handleInputChange={handleInputChange} />
+          {editToggle ?
+            <Button onClick={handleAddNewTask} className='edit' >Edit</Button> :
+            <Button onClick={handleAddNewTask} className='edit'>Add</Button>
+          }
+        </div>
+      </form>
+
+
+      {todoList.map(({ id, todo }) => {
         return (
-          <div key={id}>
-            <ul className='list' onClick={crossLine}  >
+          <div key={id} onClick={crossline}>
+            <ul className='list'>
               <li> {todo}</li>
               <div className='input'>
-                <Edit editTodo={editTodo} todo={todo} id={id} />
-                <Delete deleteTodo={deleteTodo} todo={todo} id={id} />
+                <Button onClick={() => handleEditTodo(id, todo)} className='edit'>Edit</Button>
+                <Button onClick={() => handleDeleteTodo(id)} className='delete'>Delete</Button>
               </div>
             </ul>
             <hr></hr>
