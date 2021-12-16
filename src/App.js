@@ -5,15 +5,15 @@ import Add from './components/Button/Add';
 import Edit from './components/Button/Edit';
 import Delete from './components/Button/Delete';
 import { useState, useEffect,useRef } from 'react';
+import {v4 as uuid} from 'uuid';
 
 
 
 
 function App() {
-  const box = useRef(0)
-
+  const box = useRef()
+  const uid = uuid();
   const [userInput, setUserInput] = useState('');
-  const [count, setCount] = useState(0)
   const savedTodo = JSON.parse(localStorage.getItem('todos') || '[]');
   // const [todoList, setTodoList] = useState([{id:0,todo:'Eat'},{id:1,todo:'Sleep'},...savedTodo])
   const [todoList, setTodoList] = useState(savedTodo);
@@ -31,17 +31,10 @@ function App() {
 
   const addNewTask = () => {
     if (userInput !== '') {
-      // let copyTodoList = [...todoList];
-      // copyTodoList = [...copyTodoList, { id: count, todo: userInput }];
-      // setTodoList(copyTodoList);
-
-      setTodoList(todoList.concat({ id: count, todo: userInput }))
-      setCount(count => count + 1)
+      setTodoList(todoList.concat({ id: uid, todo: userInput }))
       setUserInput('')
     }
     box.current.innerHTML='+'
-
-
   }
 
   const deleteTodo = (id) => {
@@ -76,7 +69,7 @@ function App() {
         <Input userInput={userInput} handleInputChange={handleInputChange} onkeyup={onkeyup} />
         <Add addNewTask={addNewTask} box={box} />
       </div>
-      {todoList.map(({ id, todo }) => {
+      {todoList.map(({ id, todo}) => {
         return (
           <div key={id}>
             <ul className='list' onClick={crossLine}  >
