@@ -2,10 +2,11 @@ import React from "react";
 import './add.css';
 
 
-const Add =({addNewTask})=>{
+
+const Add =({addNewTask,box})=>{
     return(
         <div>
-            <button id="change" className="add" onClick={addNewTask}>+</button>
+            <button ref={box} id="change" className="add" onClick={addNewTask}>+</button>
            
         </div>
     )

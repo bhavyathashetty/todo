@@ -1,7 +1,6 @@
 import React from "react";
 
 
-
 const Edit =({editTodo,id,todo})=>{
     return(
         <div>
