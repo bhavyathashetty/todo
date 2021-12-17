@@ -30,8 +30,8 @@ function App() {
 
 
   const handleAddNewTask = (e) => {
+    e.preventDefault()
     if (userInput !== '') {
-      e.preventDefault()
       // let copyTodoList =[...todoList]
       // copyTodoList=[...copyTodoList,{id:uid,todo:userInput}]
       // setTodoList(copyTodoList,...savedTodo)
