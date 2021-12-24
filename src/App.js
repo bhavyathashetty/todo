@@ -69,7 +69,7 @@ function App() {
   }
 
   const onSubmitSignIn = () => {
-    fetch('http://localhost:3000/register', {
+    fetch('https://todo-api-bh.herokuapp.com/register', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -100,7 +100,7 @@ function App() {
     setsignInPassword(e.target.value)
   }
   const getTodos = () => {
-    fetch('http:localhost:3000/gettodos',
+    fetch('https://todo-api-bh.herokuapp.com/gettodos',
       {
         method: 'get',
         headers: { 'Content-Type': 'application/json' }
@@ -113,7 +113,7 @@ function App() {
     // })
   }
   const onLogin = () => {
-    fetch('http://localhost:3000/signin', {
+    fetch('https://todo-api-bh.herokuapp.com/signin', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -160,7 +160,7 @@ function App() {
     e.preventDefault()
     if (userInput !== '') {
       setUserInput('')
-      fetch('http://localhost:3000/todo', {
+      fetch('https://todo-api-bh.herokuapp.com/todo', {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -183,7 +183,7 @@ function App() {
     e.preventDefault()
     if (userInput !== '') {
       setUserInput('')
-      fetch('http://localhost:3000/edittodo', {
+      fetch('https://todo-api-bh.herokuapp.com/edittodo', {
         method: 'put',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -207,7 +207,7 @@ function App() {
 
 
   const handleDeleteTodo = (id) => {
-    fetch('http://localhost:3000/deletetodo', {
+    fetch('https://todo-api-bh.herokuapp.com/deletetodo', {
       method: 'delete',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
