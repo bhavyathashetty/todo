@@ -1,95 +1,292 @@
 import React from 'react';
 import './App.css';
-import Input from './components/Input/Input';
-import { useState, useEffect } from 'react';
-import { v4 as uuid } from 'uuid';
-import Button from './components/Button/Button';
+import { useState } from 'react';
+// import { v4 as uuid } from 'uuid';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
+import Navigation from './components/Navigation/Navigation';
+import Todo from './pages/Todo/Todo';
 
+// import {
+//   BrowserRouter as Router,
+//   Routes,
+//   Route,
+//   Link,useNavigate
+// } from "react-router-dom"
 
 
 
 function App() {
-  const uid = uuid();
-  const [editToggle, setEditToggle] = useState(false)
+  // const uid = uuid();
+  const [userid, loadUser] = useState('')
+  const [todoid, loadTodoId] = useState('')
+  const [todo, setTodo] = useState('')
+  const [username, setUserName] = useState('');
+  const [useremail, setUserEmail] = useState('');
+  const [userpassword, setUserPassword] = useState('');
+  const [signinEmail, setsignInEmail] = useState('');
+  const [signinPassword, setsignInPassword] = useState('')
+  const [isSignedIn, setSignedIn] = useState(false);
+  const [editToggle, setEditToggle] = useState(false);
   const [userInput, setUserInput] = useState('');
-  const savedTodo = JSON.parse(localStorage.getItem('todos') || '[]');
-  // const initialTodo =[{id:1,todo:"Eat"},...savedTodo];
-  // const [todoList, setTodoList] = useState(initialTodo)
-  const [todoList, setTodoList] = useState(savedTodo);
+
+  const [todoList, setTodoList] = useState([]);
+  const [route, onRouteChange] = useState('signin');
+  const [editPressed,setEditPressed] = useState(false);
   
 
 
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todoList))
-  }, [todoList])
+//  const handleTodoChange =(e) =>{
+//     setTodo(e.target.value)
+    
+//   }
+
+
+
+
+  // const getTodos = (user) => {
+  //   if (user) {
+  //     fetch('http:localhost:3000/gettodos', {
+  //       method: 'get',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       params: JSON.stringify({
+  //         userid: userid
+  //       })
+  //     }).then(res => setTodoList(res.json()))
+  //   }
+  // }
+
+  const handleNamechange = (e) => {
+    setUserName(e.target.value)
+  }
+
+  const handleEmailChange = (e) => {
+    setUserEmail(e.target.value)
+  }
+
+  const handlePasswordChange = (e) => {
+    setUserPassword(e.target.value)
+  }
+
+  const onSubmitSignIn = () => {
+    fetch('http://localhost:3000/register', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: username,
+        useremail: useremail,
+        userpassword: userpassword
+      })
+    })
+      .then(res => res.json())
+      .then(user => {
+        if (user.userid) {
+          setSignedIn(true);
+          onRouteChange('home')
+
+          loadUser(user.userid)
+        }
+      })
+    setSignedIn(true);
+    onRouteChange('home')
+
+  }
+
+  const handleSEmailChange = (e) => {
+    setsignInEmail(e.target.value)
+  }
+
+  const handleSPasswordChange = (e) => {
+    setsignInPassword(e.target.value)
+  }
+  const getTodos = () => {
+    fetch('http:localhost:3000/gettodos',
+      {
+        method: 'get',
+        headers: { 'Content-Type': 'application/json' }
+      }).then(res => console.log(res.json()))
+    // .then(todos => {
+    //   if (todos) { setTodoList(todos)}
+    //   else {
+    //     setTodoList([])
+    //   }
+    // })
+  }
+  const onLogin = () => {
+    fetch('http://localhost:3000/signin', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        signInEmail: signinEmail,
+        signInPassword: signinPassword
+      })
+    })
+      .then(res => res.json())
+      .then(user => {
+        if (user.userid) {
+          setSignedIn(true);
+          onRouteChange('home');
+          loadUser(user.userid)
+
+          // getTodos(user.userid)
+        }
+      })
+
+    setSignedIn(true);
+    onRouteChange('home');
+  }
+
+
+
+
+  // useEffect(() => {
+  //   localStorage.setItem('todos', JSON.stringify(todoList))
+  // }, [todoList])
 
 
   const handleInputChange = (e) => {
     setUserInput(e.target.value)
   }
 
+  
+  const handleTodoChange =(e) =>{
+    setTodo(e.target.value)
+    console.log(todo)
+  }
+
+
 
   const handleAddNewTask = (e) => {
     e.preventDefault()
     if (userInput !== '') {
-      // let copyTodoList =[...todoList]
-      // copyTodoList=[...copyTodoList,{id:uid,todo:userInput}]
-      // setTodoList(copyTodoList,...savedTodo)
-      setTodoList(todoList.concat({ id: uid, todo: userInput }))
       setUserInput('')
+      fetch('http://localhost:3000/todo', {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          todo: userInput,
+          todouserid: userid
+        })
+      }).then(res => res.json())
+        .then(user => {
+          const newlist = todoList.concat({ id: user.id, todo: user.todo })
+          
+          setTodoList(newlist.sort((a, b) => a.id - b.id))
+          loadTodoId(user.id)
+
+        })
     }
     setEditToggle(false)
   }
 
-  const handleDeleteTodo = (id) => {
-    const newList = todoList.filter((item) => item.id !== id);
-    setTodoList(newList);
-
+  const handleEdit = (e) => {
+    e.preventDefault()
+    if (userInput !== '') {
+      setUserInput('')
+      fetch('http://localhost:3000/edittodo', {
+        method: 'put',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          todo: userInput,
+          id: todoid
+        })
+      })
+        .then(res => res.json())
+        .then(user => {
+          loadTodoId(user.id)
+          const newlist = todoList.concat({ id: todoid, todo: userInput })
+          setTodoList(newlist.sort((a, b) => a.id - b.id))
+          const newist = newlist.filter((item) => item.todo !==todo);
+          setTodoList(newist) 
+        })
+    }
+    setEditToggle(false)
+    setEditPressed(false)
   }
+
+
+
+  const handleDeleteTodo = (id) => {
+    fetch('http://localhost:3000/deletetodo', {
+      method: 'delete',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: id
+      })
+    })
+      .then(res => res.json())
+      .then(user => {
+        const newList = todoList.filter((item) => item.id !== id);
+        loadTodoId(user.id)
+        setTodoList(newList);
+      })
+  }
+  
+
 
   const handleEditTodo = (id, todo) => {
     setUserInput(todo)
-    const newList = todoList.filter((item) => item.id !== id);
-    setTodoList(newList);
-    setEditToggle(true)
+    setTodo(todo)
+    loadTodoId(id)
+    setEditToggle(true)  
+    // if(id){
+    //   setEditPressed(true)
+    // }
   }
 
 
-  const crossline = (e) => {
-    const element = e.target;
-    element.classList.toggle("crossed-line");
-
-  };
 
 
   return (
-    <div className="App">
-      <h1>ToDo-List</h1>
-      <form onSubmit={handleAddNewTask}>
-        <div className='input'>
-          <Input userInput={userInput} handleInputChange={handleInputChange} />
-          {editToggle ?
-            <Button onClick={handleAddNewTask} className='edit' >Edit</Button> :
-            <Button onClick={handleAddNewTask} className='edit'>Add</Button>
-          }
-        </div>
-      </form>
+    <div className='App'>
+      <Navigation isSignedIn={isSignedIn} onRouteChange={onRouteChange} setSignedIn={setSignedIn} />
+      {/* <Router>
+        <Link to="/">Register</Link>
+        <Link to="/home">Home</Link>
+        <Link to="/signin">SignIn</Link>
 
+        <Routes>
+          <Route path="/" exact element={
+            <Register
+              handleNamechange={handleNamechange} handleEmailChange={handleEmailChange}
+              handlePasswordChange={handlePasswordChange} onSubmitSignIn={onSubmitSignIn}
+            />}
+          >
+          </Route>
+          <Route path="/signin" exact element={
+            <Login
+              handleSEmailChange={handleSEmailChange} handleSPasswordChange={handleSPasswordChange}
+              onLogin={onLogin} getTodos={getTodos} />}
+          >
+          </Route>
 
-      {todoList.map(({ id, todo }) => {
-        return (
-          <div key={id} onClick={crossline}>
-            <ul className='list'>
-              <li> {todo}</li>
-              <div className='input'>
-                <Button onClick={() => handleEditTodo(id, todo)} className='edit'>Edit</Button>
-                <Button onClick={() => handleDeleteTodo(id)} className='delete'>Delete</Button>
-              </div>
-            </ul>
-            <hr></hr>
-          </div>
-        )
-      })}
+          <Route path="/home" exact element={
+            <Todo handleAddNewTask={handleAddNewTask} setSignedIn={setSignedIn}
+              handleDeleteTodo={handleDeleteTodo} handleEditTodo={handleEditTodo} handleInputChange={handleInputChange}
+              crossline={crossline} editToggle={editToggle} todoList={todoList} userInput={userInput}
+              todoo={todoo} todoid={todoid} handleEdit={handleEdit}
+            />}
+          >
+          </Route>
+        </Routes>
+      </Router> */}
+      {
+        route === 'signin' ?
+          <Login
+            handleSEmailChange={handleSEmailChange} handleSPasswordChange={handleSPasswordChange}
+            onLogin={onLogin} getTodos={getTodos} />
+          : (route === 'home' ?
+            <Todo handleAddNewTask={handleAddNewTask} setSignedIn={setSignedIn}
+              handleDeleteTodo={handleDeleteTodo} handleEditTodo={handleEditTodo} handleInputChange={handleInputChange}
+               editToggle={editToggle} todoList={todoList} userInput={userInput}
+               todoid={todoid} handleEdit={handleEdit} editPressed={editPressed}
+              handleTodoChange={handleTodoChange} todo={todo}
+            /> 
+            : <Register
+              handleNamechange={handleNamechange} handleEmailChange={handleEmailChange}
+              handlePasswordChange={handlePasswordChange} onSubmitSignIn={onSubmitSignIn}
+            />
+          )}
     </div>
   );
 
