@@ -128,7 +128,6 @@ function App() {
           onRouteChange('home');
           loadUser(user.userid)
 
-          // getTodos(user.userid)
         }
       })
 
@@ -136,12 +135,6 @@ function App() {
     onRouteChange('home');
   }
 
-
-
-
-  // useEffect(() => {
-  //   localStorage.setItem('todos', JSON.stringify(todoList))
-  // }, [todoList])
 
 
   const handleInputChange = (e) => {
@@ -194,7 +187,7 @@ function App() {
         .then(res => res.json())
         .then(user => {
           loadTodoId(user.id)
-          const newlist = todoList.concat({ id: todoid, todo: userInput })
+          const newlist = todoList.concat({ id: todoid, todo: user.todo })
           setTodoList(newlist.sort((a, b) => a.id - b.id))
           const newist = newlist.filter((item) => item.todo !==todo);
           setTodoList(newist) 
