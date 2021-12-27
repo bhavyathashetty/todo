@@ -14,12 +14,12 @@ const Todo = ({handleTodoChange,editPressed, handleEdit, handleAddNewTask, handl
 
         <div>
             <h1>ToDo-List</h1>
-            <form>
+            <form type='submit'>
                 <div className='input'>
                     <Input userInput={userInput} handleInputChange={handleInputChange} />
                     {editToggle ?
-                        <Button onClick={handleEdit} className='edit' >Edit</Button> :
-                        <Button onClick={handleAddNewTask} className='edit'>Add</Button>
+                        <Button  onClick={handleEdit} className='edit' >Edit</Button> :
+                        <Button  onClick={handleAddNewTask} className='edit'>Add</Button>
                     }
                 </div>
             </form>

@@ -35,27 +35,6 @@ function App() {
   const [editPressed,setEditPressed] = useState(false);
   
 
-
-//  const handleTodoChange =(e) =>{
-//     setTodo(e.target.value)
-    
-//   }
-
-
-
-
-  // const getTodos = (user) => {
-  //   if (user) {
-  //     fetch('http:localhost:3000/gettodos', {
-  //       method: 'get',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       params: JSON.stringify({
-  //         userid: userid
-  //       })
-  //     }).then(res => setTodoList(res.json()))
-  //   }
-  // }
-
   const handleNamechange = (e) => {
     setUserName(e.target.value)
   }
@@ -68,8 +47,9 @@ function App() {
     setUserPassword(e.target.value)
   }
 
-  const onSubmitSignIn = () => {
-    fetch('https://todo-api-bh.herokuapp.com/register', {
+  const onSubmitSignIn = (e) => {
+    e.preventDefault()
+    fetch('http://localhost:3000/register', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -99,21 +79,22 @@ function App() {
   const handleSPasswordChange = (e) => {
     setsignInPassword(e.target.value)
   }
-  const getTodos = () => {
-    fetch('https://todo-api-bh.herokuapp.com/gettodos',
+  const getTodos = (userid) => {
+    fetch(`http://localhost:3000/gettodos/${userid}`,
       {
         method: 'get',
         headers: { 'Content-Type': 'application/json' }
-      }).then(res => console.log(res.json()))
-    // .then(todos => {
-    //   if (todos) { setTodoList(todos)}
-    //   else {
-    //     setTodoList([])
-    //   }
-    // })
+      }).then(res => res.json())
+    .then(todos => {
+      if (todos) { setTodoList(todos)}
+      else {
+        setTodoList([])
+      }
+    })
   }
-  const onLogin = () => {
-    fetch('https://todo-api-bh.herokuapp.com/signin', {
+  const onLogin = (e) => {
+    e.preventDefault()
+    fetch('http://localhost:3000/signin', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -127,7 +108,7 @@ function App() {
           setSignedIn(true);
           onRouteChange('home');
           loadUser(user.userid)
-
+          getTodos(user.userid)
         }
       })
 
@@ -153,7 +134,7 @@ function App() {
     e.preventDefault()
     if (userInput !== '') {
       setUserInput('')
-      fetch('https://todo-api-bh.herokuapp.com/todo', {
+      fetch('http://localhost:3000/todo', {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -163,10 +144,8 @@ function App() {
       }).then(res => res.json())
         .then(user => {
           const newlist = todoList.concat({ id: user.id, todo: user.todo })
-          
           setTodoList(newlist.sort((a, b) => a.id - b.id))
           loadTodoId(user.id)
-
         })
     }
     setEditToggle(false)
@@ -176,7 +155,7 @@ function App() {
     e.preventDefault()
     if (userInput !== '') {
       setUserInput('')
-      fetch('https://todo-api-bh.herokuapp.com/edittodo', {
+      fetch('http://localhost:3000/edittodo', {
         method: 'put',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -187,7 +166,7 @@ function App() {
         .then(res => res.json())
         .then(user => {
           loadTodoId(user.id)
-          const newlist = todoList.concat({ id: todoid, todo: user.todo })
+          const newlist = todoList.concat({ id: todoid, todo:userInput})
           setTodoList(newlist.sort((a, b) => a.id - b.id))
           const newist = newlist.filter((item) => item.todo !==todo);
           setTodoList(newist) 
@@ -200,7 +179,7 @@ function App() {
 
 
   const handleDeleteTodo = (id) => {
-    fetch('https://todo-api-bh.herokuapp.com/deletetodo', {
+    fetch('http://localhost:3000/deletetodo', {
       method: 'delete',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
